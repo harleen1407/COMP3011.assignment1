@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Speech to Text</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Speech to Text</h1>
+
+        <p>
+            Record your voice and convert it into text.
+        </p>
+
+        <div id="status">
+            Ready to record
+        </div>
+
+        <div class="controls">
+
+            <button id="startButton">
+                Start Recording
+            </button>
+
+            <button id="stopButton" disabled>
+                Stop Recording
+            </button>
+
+        </div>
+
+        <section>
+            <h2>Transcription</h2>
+
+            <p id="transcription">
+                Your transcription will appear here.
+            </p>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
