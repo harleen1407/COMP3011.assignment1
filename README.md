@@ -4,7 +4,7 @@ Java Spring Boot speech-to-text web application.
 
 ## Author
 
-Your Name
+Harleen Kaur Dhillon
 
 ## Description
 
