@@ -86,7 +86,8 @@ public class OpenAiTranscriptionService implements TranscriptionService {
                             throw new RuntimeException(
                                     "OpenAI transcription request failed "
                                     + "with HTTP status "
-                                    + response.statusCode());
+                                    + response.statusCode()
+                            		+ response.body());
                         }
 
                         try {

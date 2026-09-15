@@ -80,9 +80,13 @@ async function uploadAudio(audioBlob) {
             body: formData
         });
 
-        if (!response.ok) {
-            throw new Error("Transcription request failed");
-        }
+
+		if (!response.ok) {
+		    const errorText = await response.text();
+		    throw new Error(
+		        "Server returned " + response.status + ": " + errorText
+		    );
+		}
 
         const data = await response.json();
 
@@ -90,11 +94,8 @@ async function uploadAudio(audioBlob) {
 
         status.textContent = "Ready to record again.";
 
-    } catch (error) {
-
-        console.error(error);
-
-        status.textContent =
-            "An error occurred while transcribing the recording.";
-    }
+		} catch (error) {
+		    console.error(error);
+		    status.textContent = error.message;
+		}
 }

@@ -50,6 +50,6 @@ public class AudioController {
                                 .status(HttpStatus.BAD_GATEWAY)
                                 .body(Map.of(
                                         "error",
-                                        "Unable to transcribe audio.")));
+                                        "Unable to transcribe audio." + error.getMessage())));
     }
 }
