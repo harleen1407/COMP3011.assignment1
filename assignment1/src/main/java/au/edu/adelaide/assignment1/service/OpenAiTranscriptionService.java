@@ -25,17 +25,20 @@ public class OpenAiTranscriptionService implements TranscriptionService {
     private final ObjectMapper objectMapper;
     private final String apiKey;
     private final String baseUrl;
+    private final StatisticsService statisticsService;
 
     public OpenAiTranscriptionService(
             HttpClient httpClient,
             ObjectMapper objectMapper,
             @Value("${openai.api-key}") String apiKey,
-            @Value("${openai.base-url}") String baseUrl) {
+            @Value("${openai.base-url}") String baseUrl,
+            StatisticsService statisticsService) {
 
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
         this.apiKey = apiKey;
         this.baseUrl = baseUrl;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -87,7 +90,8 @@ public class OpenAiTranscriptionService implements TranscriptionService {
                                     "OpenAI transcription request failed "
                                     + "with HTTP status "
                                     + response.statusCode()
-                            		+ response.body());
+                                    + " "
+                                    + response.body());
                         }
 
                         try {
@@ -96,12 +100,51 @@ public class OpenAiTranscriptionService implements TranscriptionService {
                                     objectMapper.readTree(
                                             response.body());
 
+                            /*
+                             * Read token usage from the OpenAI response.
+                             * The usage object contains the input and
+                             * output token counts for this request.
+                             */
+                            JsonNode usage =
+                                    json.get("usage");
+
+                            if (usage != null && !usage.isNull()) {
+
+                                JsonNode inputTokensNode =
+                                        usage.get("input_tokens");
+
+                                JsonNode outputTokensNode =
+                                        usage.get("output_tokens");
+
+                                long inputTokens = 0;
+                                long outputTokens = 0;
+
+                                if (inputTokensNode != null
+                                        && !inputTokensNode.isNull()) {
+
+                                    inputTokens =
+                                            inputTokensNode.asLong();
+                                }
+
+                                if (outputTokensNode != null
+                                        && !outputTokensNode.isNull()) {
+
+                                    outputTokens =
+                                            outputTokensNode.asLong();
+                                }
+
+                                statisticsService.addUsage(
+                                        inputTokens,
+                                        outputTokens);
+                            }
+
                             JsonNode text =
                                     json.get("text");
 
                             if (text == null || text.isNull()) {
                                 throw new RuntimeException(
-                                        "OpenAI response did not contain transcription text.");
+                                        "OpenAI response did not contain "
+                                        + "transcription text.");
                             }
 
                             return text.asText();
@@ -109,7 +152,8 @@ public class OpenAiTranscriptionService implements TranscriptionService {
                         } catch (RuntimeException e) {
 
                             throw new RuntimeException(
-                                    "Could not read OpenAI response.", e);
+                                    "Could not read OpenAI response.",
+                                    e);
                         }
                     });
 
