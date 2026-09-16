@@ -20,8 +20,7 @@ public class AudioController {
 
     private final TranscriptionService transcriptionService;
 
-    public AudioController(
-            TranscriptionService transcriptionService) {
+    public AudioController(TranscriptionService transcriptionService) {
 
         this.transcriptionService = transcriptionService;
     }
@@ -39,7 +38,11 @@ public class AudioController {
                                     "error",
                                     "Audio file is empty.")));
         }
-
+        
+        /*
+         * CompletableFuture allows the response to be completed asynchronously
+         * after the Cloud STT service responds.
+         */
         return transcriptionService
                 .transcribe(audio)
                 .thenApply(text ->

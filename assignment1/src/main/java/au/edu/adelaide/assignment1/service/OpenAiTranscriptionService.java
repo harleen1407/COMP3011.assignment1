@@ -77,8 +77,14 @@ public class OpenAiTranscriptionService implements TranscriptionService {
                                     .ofByteArray(requestBody))
                     .build();
 
-            return httpClient
-                    .sendAsync(
+            
+            /*
+             * The OpenAI request is sent asynchronously so the server thread
+             * does not remain blocked while waiting for the external Cloud API.
+             * This allows multiple transcription requests to be processed at
+             * the same time.
+             */
+            return httpClient.sendAsync(
                             request,
                             HttpResponse.BodyHandlers.ofString())
                     .thenApply(response -> {

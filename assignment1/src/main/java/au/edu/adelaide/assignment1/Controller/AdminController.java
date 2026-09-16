@@ -23,6 +23,10 @@ public class AdminController {
     private final Instant serverStart;
     private final StatisticsService statisticsService;
 
+    /*
+     * AtomicBoolean ensures that only one shutdown request can start
+     * the shutdown process when multiple requests arrive at the same time.
+     */
     private final AtomicBoolean shutdownInProgress =
             new AtomicBoolean(false);
 
